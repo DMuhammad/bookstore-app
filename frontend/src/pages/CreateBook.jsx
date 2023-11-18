@@ -6,22 +6,27 @@ import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 
 const CreateBook = () => {
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [publishYear, setPublishYear] = useState("");
+  const [book, setBook] = useState({
+    title: "",
+    author: "",
+    publishYear: "",
+  });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setBook({
+      ...book,
+      [name]: value,
+    });
+  };
+
   const handleSaveBook = () => {
-    const data = {
-      title,
-      author,
-      publishYear,
-    };
     setLoading(true);
     axios
-      .post("http://localhost:5555/books", data)
+      .post("http://localhost:5555/books", book)
       .then(() => {
         setLoading(false);
         enqueueSnackbar("Book Created succesfully", { variant: "success" });
@@ -45,8 +50,9 @@ const CreateBook = () => {
           <label className="text-xl mr-4 text-gray-500">Title</label>
           <input
             type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            value={book.title}
+            name="title"
+            onChange={handleChange}
             className="border-2 border-gray-500 px-4 py-2 w-full"
           />
         </div>
@@ -54,8 +60,9 @@ const CreateBook = () => {
           <label className="text-xl mr-4 text-gray-500">Author</label>
           <input
             type="text"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
+            value={book.author}
+            name="author"
+            onChange={handleChange}
             className="border-2 border-gray-500 px-4 py-2 w-full"
           />
         </div>
@@ -63,8 +70,9 @@ const CreateBook = () => {
           <label className="text-xl mr-4 text-gray-500">Publish Year</label>
           <input
             type="text"
-            value={publishYear}
-            onChange={(e) => setPublishYear(e.target.value)}
+            value={book.publishYear}
+            name="publishYear"
+            onChange={handleChange}
             className="border-2 border-gray-500 px-4 py-2 w-full"
           />
         </div>

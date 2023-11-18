@@ -6,25 +6,29 @@ import Spinner from "../components/Spinner";
 import { useSnackbar } from "notistack";
 
 const EditBook = () => {
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [publishYear, setPublishYear] = useState("");
+  const [book, setBook] = useState({
+    title: "",
+    author: "",
+    publishYear: "",
+  });
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const handleEditBook = () => {
-    const data = {
-      title,
-      author,
-      publishYear,
-    };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setBook({
+      ...book,
+      [name]: value,
+    });
+  };
 
+  const handleEditBook = () => {
     setLoading(true);
     axios
-      .put(`http://localhost:5555/books/${id}`, data)
+      .put(`http://localhost:5555/books/${id}`, book)
       .then(() => {
         setLoading(false);
         enqueueSnackbar("Book Updated successfully", { variant: "success" });
@@ -44,9 +48,11 @@ const EditBook = () => {
     axios
       .get(`http://localhost:5555/books/${id}`)
       .then((res) => {
-        setTitle(res.data.title);
-        setAuthor(res.data.author);
-        setPublishYear(res.data.publishYear);
+        setBook({
+          title: res.data.title,
+          author: res.data.author,
+          publishYear: res.data.publishYear,
+        });
         setLoading(false);
       })
       .catch((err) => {
@@ -66,8 +72,9 @@ const EditBook = () => {
           <label className="text-xl mr-4 text-gray-500">Title</label>
           <input
             type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            value={book.title}
+            name="title"
+            onChange={handleChange}
             className="border-2 border-gray-500 py-2 w-full"
           />
         </div>
@@ -75,8 +82,9 @@ const EditBook = () => {
           <label className="text-xl mr-4 text-gray-500">Author</label>
           <input
             type="text"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
+            value={book.author}
+            name="author"
+            onChange={handleChange}
             className="border-2 border-gray-500 py-2 w-full"
           />
         </div>
@@ -84,8 +92,9 @@ const EditBook = () => {
           <label className="text-xl mr-4 text-gray-500">Publish Year</label>
           <input
             type="text"
-            value={publishYear}
-            onChange={(e) => setPublishYear(e.target.value)}
+            value={book.publishYear}
+            name="publishYear"
+            onChange={handleChange}
             className="border-2 border-gray-500 py-2 w-full"
           />
         </div>
