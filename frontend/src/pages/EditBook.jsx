@@ -3,12 +3,14 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import BackButton from "../components/BackButton";
 import Spinner from "../components/Spinner";
+import { useSnackbar } from "notistack";
 
 const EditBook = () => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [publishYear, setPublishYear] = useState("");
   const [loading, setLoading] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -25,11 +27,14 @@ const EditBook = () => {
       .put(`http://localhost:5555/books/${id}`, data)
       .then(() => {
         setLoading(false);
+        enqueueSnackbar("Book Updated successfully", { variant: "success" });
         navigate("/");
       })
       .catch((err) => {
         setLoading(false);
-        alert("An error happened. Please check console");
+        enqueueSnackbar("An error happened. Please check console", {
+          variant: "error",
+        });
         console.error(err);
       });
   };
